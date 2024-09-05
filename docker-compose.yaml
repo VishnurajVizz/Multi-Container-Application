@@ -30,11 +30,11 @@ services:
     env_file:
       - ./env/mongo.env
   fronted:
-    build: ./fronted
+    build: ./frontend
     ports:
       - 3000:3000
     volumes:
-      - ./fronted/src:/app/src
+      - ./frontend/src:/app/src
     stdin_open: true
     tty: true
     depends_on:
