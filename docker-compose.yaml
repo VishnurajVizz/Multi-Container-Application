@@ -1,0 +1,45 @@
+services:
+  backend:
+    build: ./backend
+    # build:
+    #   context: ./backend # path from which the contents should be copied to Docker
+    #   # dockerfile: Dockerfile # If docker file name is same as Dockerfile we dont have to specify it
+    #   args:
+    #     arg1: 1
+
+    ports:
+      - 80:80
+    env_file:
+      - ./env/backend.env
+    volumes:
+      - logs:/app/logs
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb # backend container depends on mongo container, so mongo container should be created before
+
+  mongodb:
+    image: mongo
+    volumes:
+      - data:/data/db
+    #environment:
+    # - MONGO_INITDB_ROOT_USERNAME=vish (or)
+    # MONGO_INITDB_ROOT_USERNAME: vish
+    # MONGO_INITDB_ROOT_PASSWORD: random
+    # We can set this in env file if we don't want the values to be published
+    env_file:
+      - ./env/mongo.env
+  fronted:
+    build: ./fronted
+    ports:
+      - 3000:3000
+    volumes:
+      - ./fronted/src:/app/src
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+
+volumes:
+  data:
+  logs:
